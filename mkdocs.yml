@@ -7,6 +7,7 @@ nav :
  - Docker常用命令 :  docker_commands.md
  - Ansible簡介及用法 :  ansible簡介及用法.md
  - 運維知識 : 運維知識.md
+ - 運維知識 : ocp命令.md
 theme:
   name: readthedocs
   logo: image/favicon.ico
