@@ -108,6 +108,10 @@
     </ul>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../ocp%E5%91%BD%E4%BB%A4/">ocp命令</a>
+                </li>
+              </ul>
       </div>
     </div>
     </nav>
@@ -405,13 +409,14 @@ end
   # 指定 box（可依需求修改）
   config.vm.box = &quot;rockylinux/9&quot;
 
-  config.vm.define &quot;vm1&quot; do |vm1|
-    vm1.vm.hostname = &quot;vm1&quot;
-  end
+config.vm.define &quot;vm1&quot; do |vm1|
+  vm1.vm.hostname = &quot;vm1&quot;
+  vm1.vm.network &quot;private_network&quot;, ip: &quot;192.168.126.100&quot;
+end
 
-  config.vm.define &quot;vm2&quot; do |vm2|
-    vm2.vm.hostname = &quot;vm2&quot;
-  end
+config.vm.define &quot;vm2&quot; do |vm2|
+  vm2.vm.hostname = &quot;vm2&quot;
+  vm2.vm.network &quot;private_network&quot;, ip: &quot;192.168.126.101&quot;
 end
 
 # 啟動第一台
@@ -488,6 +493,7 @@ vagrant up --provider=vmware_desktop
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../ansible%E7%B0%A1%E4%BB%8B%E5%8F%8A%E7%94%A8%E6%B3%95/" class="btn btn-neutral float-left" title="Ansible簡介及用法"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../ocp%E5%91%BD%E4%BB%A4/" class="btn btn-neutral float-right" title="ocp命令">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -512,6 +518,8 @@ vagrant up --provider=vmware_desktop
     
       <span><a href="../ansible%E7%B0%A1%E4%BB%8B%E5%8F%8A%E7%94%A8%E6%B3%95/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
+    
+      <span><a href="../ocp%E5%91%BD%E4%BB%A4/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
