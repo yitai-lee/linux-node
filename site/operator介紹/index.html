@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>operator介紹 - Darren</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "operator\u4ecb\u7d39";
+        var mkdocs_page_input_path = "operator\u4ecb\u7d39.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../image/favicon.ico" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../note/">使用 MkDocs 建立文件網站教學筆記</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../%E5%AE%B9%E5%99%A8%E7%9F%A5%E8%AD%98/">Linux 容器筆記</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../docker_commands/">Docker常用命令</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../ansible%E7%B0%A1%E4%BB%8B%E5%8F%8A%E7%94%A8%E6%B3%95/">Ansible簡介及用法</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../%E9%81%8B%E7%B6%AD%E7%9F%A5%E8%AD%98/">運維知識</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">operator介紹</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#operator-framework">一、Operator Framework 架構概觀</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#_1">模組說明</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#openshift-operator">二、OpenShift Operator 安裝流程（實務邏輯）</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-catalogsource">① CatalogSource（清單來源）</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-subscription">② Subscription（下單）</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-installplan">③ InstallPlan（施工藍圖）</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-clusterserviceversioncsv">④ ClusterServiceVersion（CSV，說明書）</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-operator-ready">⑤ Operator Ready（可用）</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_2">三、生活比喻對照表</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_3">四、完整流程總結</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#10">五、10 秒記憶口訣</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_4">六、重點補充（技術層面）</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_5">七、完整流程圖（邏輯關係）</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Darren</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">operator介紹</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="operator-framework-olm-markdown">🧱 Operator Framework 架構與 OLM 安裝流程（完整 Markdown 檔案）</h1>
+<hr />
+<h2 id="operator-framework">一、Operator Framework 架構概觀</h2>
+<p>Operator Framework 是 Red Hat 與社群共同維護的一套開源工具集，<br />
+目的是讓開發者能以一致方式 <strong>開發、封裝、發佈、安裝與管理 Operator</strong>。  </p>
+<p>整體結構如下：</p>
+<pre><code>┌────────────────────────────────────┐
+│          Operator Framework        │
+│────────────────────────────────────│
+│                                    │
+│  ┌──────────────┐   ┌──────────────┐
+│  │ Operator SDK │→  │ Operator Image│
+│  │  建立與打包   │   │ (bundle.csv) │
+│  └──────────────┘   └──────┬───────┘
+│                            │
+│                            ▼
+│                 ┌─────────────────────┐
+│                 │ Operator Registry   │
+│                 │ (Catalog Image)     │
+│                 │ 存放 CSV、CRD 資訊   │
+│                 └─────────┬──────────┘
+│                           │
+│                           ▼
+│              ┌────────────────────────────┐
+│              │ Operator Lifecycle Manager │
+│              │ 控制安裝、升級、授權、依賴   │
+│              └────────────┬──────────────┘
+│                           │
+│                           ▼
+│                 ┌───────────────────────┐
+│                 │     OperatorHub       │
+│                 │ Web UI → 安裝/查詢     │
+│                 └───────────────────────┘
+└────────────────────────────────────┘
+</code></pre>
+<hr />
+<h3 id="_1">模組說明</h3>
+<table>
+<thead>
+<tr>
+<th>元件</th>
+<th>功能說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Operator SDK</strong></td>
+<td>提供開發框架與工具（支援 Go、Ansible、Helm），用來撰寫 Operator 程式與打包成 Bundle Image。</td>
+</tr>
+<tr>
+<td><strong>Operator Registry</strong></td>
+<td>將多個 Bundle Image 彙整為 Catalog Image，並提供給叢集中的 OLM 查詢使用。</td>
+</tr>
+<tr>
+<td><strong>Operator Lifecycle Manager（OLM）</strong></td>
+<td>核心控制器，負責 Operator 的安裝、升級、授權與依賴管理。</td>
+</tr>
+<tr>
+<td><strong>OperatorHub</strong></td>
+<td>Web 介面，讓使用者在 OCP Console 上可視化地搜尋、安裝 Operator。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="openshift-operator">二、OpenShift Operator 安裝流程（實務邏輯）</h2>
+<p>核心概念：<br />
+OpenShift 不直接幫你安裝 App。<br />
+它透過 <strong>Operator（小幫手）</strong> 去幫你自動安裝、監控與維護 App。  </p>
+<p>整條鏈路是：</p>
+<blockquote>
+<p>你（管理員） → OLM（控制層） → Operator（小幫手） → App（最終應用）</p>
+</blockquote>
+<hr />
+<h3 id="1-catalogsource">① CatalogSource（清單來源）</h3>
+<p><strong>作用</strong><br />
+- 提供 OLM 一個查詢來源，讓它知道有哪些可用的 Operator、版本與描述資訊。<br />
+- CatalogSource 指向一個「Catalog Image」（index image），OCP 會在 <code>openshift-marketplace</code> 啟動一個 Pod 提供 gRPC 服務。</p>
+<p><strong>實務設定</strong></p>
+<pre><code>harbor.com/darren-lab/olm-redhat-operator-index:v4.12
+</code></pre>
+<p><strong>結果</strong><br />
+- 系統啟動一個 Pod，OLM 可透過它查詢 Operator 清單與版本。  </p>
+<p><strong>一句話</strong></p>
+<blockquote>
+<p>CatalogSource = Operator 的「App 商店伺服器」。</p>
+</blockquote>
+<hr />
+<h3 id="2-subscription">② Subscription（下單）</h3>
+<p><strong>作用</strong><br />
+- 告訴 OLM：「我要哪個 Operator、從哪個 Catalog 安裝、要不要自動更新。」</p>
+<p><strong>內容包含</strong>
+- Operator 名稱（name）<br />
+- 來源 Catalog（source、sourceNamespace）<br />
+- 頻道（channel）<br />
+- 安裝批准模式（installPlanApproval: Automatic / Manual）</p>
+<p><strong>範例</strong></p>
+<pre><code class="language-yaml">apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: vertical-pod-autoscaler
+  namespace: vertical-pod-autoscaler
+spec:
+  channel: stable
+  name: vertical-pod-autoscaler
+  source: olm-redhat-operator-index
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Automatic
+</code></pre>
+<p><strong>一句話</strong></p>
+<blockquote>
+<p>Subscription = 你按下「我要裝這個 Operator」的訂單。</p>
+</blockquote>
+<hr />
+<h3 id="3-installplan">③ InstallPlan（施工藍圖）</h3>
+<p><strong>作用</strong>
+- 當 Subscription 被建立後，OLM 會自動產生一個 InstallPlan。<br />
+- InstallPlan 是一份「安裝藍圖」，列出要建立的所有物件（CRD、RBAC、Deployment、CSV）。  </p>
+<p><strong>自動與手動差異</strong>
+- 若 Subscription 設為 <code>Automatic</code> → InstallPlan 會自動批准並執行。<br />
+- 若設為 <code>Manual</code> → 需要手動 Approve。  </p>
+<p><strong>查詢方式</strong></p>
+<pre><code class="language-bash">oc get installplan -n &lt;namespace&gt;
+oc describe installplan &lt;installplan-name&gt; -n &lt;namespace&gt;
+</code></pre>
+<p><strong>範例輸出</strong></p>
+<pre><code>Name:             install-vpa-abcde
+Namespace:        vertical-pod-autoscaler
+Approval:         Automatic
+Phase:            Complete
+CSV:              verticalpodautoscaler.4.12.x
+</code></pre>
+<p><strong>一句話</strong></p>
+<blockquote>
+<p>InstallPlan = OLM 自動產生的安裝腳本，決定要裝什麼、怎麼裝。</p>
+</blockquote>
+<hr />
+<h3 id="4-clusterserviceversioncsv">④ ClusterServiceVersion（CSV，說明書）</h3>
+<p><strong>作用</strong>
+- 定義此版本 Operator 的全部內容，包括：
+  - 要啟動哪些 Deployment（Pod）
+  - 要建立哪些 CRD（功能）
+  - 要哪些 RBAC 權限
+  - Operator 的版本資訊與描述</p>
+<p><strong>CSV 狀態轉換</strong>
+- <code>Pending</code> → <code>Installing</code> → <code>Succeeded</code><br />
+  當 CSV 變成 <code>Succeeded</code>，代表 Operator 已成功部署並啟動。</p>
+<p><strong>一句話</strong></p>
+<blockquote>
+<p>CSV = Operator 的「版本說明書」，OLM 照它啟動服務。</p>
+</blockquote>
+<hr />
+<h3 id="5-operator-ready">⑤ Operator Ready（可用）</h3>
+<p><strong>結果</strong>
+- 當 CSV 為 <code>Succeeded</code>，Operator 已啟動並運作。<br />
+- 系統中會新增新的 CRD，可建立對應 CR 物件使用功能。</p>
+<p><strong>例子</strong></p>
+<pre><code>oc get VerticalPodAutoscaler
+</code></pre>
+<p><strong>一句話</strong></p>
+<blockquote>
+<p>Operator Ready = 小幫手正式上班，開始幫你管理應用。</p>
+</blockquote>
+<hr />
+<h2 id="_2">三、生活比喻對照表</h2>
+<table>
+<thead>
+<tr>
+<th>階段</th>
+<th>比喻</th>
+<th>代表意義</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CatalogSource</td>
+<td>App 商店清單</td>
+<td>告訴系統有哪些 Operator 可安裝</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td>你在商店按下「安裝」</td>
+<td>指定要安裝哪個 Operator</td>
+</tr>
+<tr>
+<td>InstallPlan</td>
+<td>背景安裝流程</td>
+<td>列出並執行安裝步驟</td>
+</tr>
+<tr>
+<td>CSV</td>
+<td>安裝說明書</td>
+<td>Operator 的版本與運作規格</td>
+</tr>
+<tr>
+<td>Operator Ready</td>
+<td>App 可使用</td>
+<td>Operator 運作中，可建立 CR 使用功能</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_3">四、完整流程總結</h2>
+<ol>
+<li><strong>CatalogSource</strong>：提供 OLM 可查詢的 Operator 清單來源。  </li>
+<li><strong>Subscription</strong>：使用者選擇要安裝的 Operator，並設定更新方式。  </li>
+<li><strong>InstallPlan</strong>：OLM 根據 Subscription 自動產生的安裝計畫。  </li>
+<li><strong>CSV</strong>：描述 Operator 的版本與行為，OLM 依此啟動服務。  </li>
+<li><strong>Operator Ready</strong>：Operator 啟動完成，可提供 CRD 功能。  </li>
+</ol>
+<hr />
+<h2 id="10">五、10 秒記憶口訣</h2>
+<blockquote>
+<p><strong>清單 → 下單 → 施工 → 說明書 → 可用</strong><br />
+（CatalogSource → Subscription → InstallPlan → CSV → Ready）</p>
+</blockquote>
+<hr />
+<h2 id="_4">六、重點補充（技術層面）</h2>
+<table>
+<thead>
+<tr>
+<th>名稱</th>
+<th>建立者</th>
+<th>Namespace</th>
+<th>是否手動</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CatalogSource</td>
+<td>管理員</td>
+<td>openshift-marketplace</td>
+<td>手動建立</td>
+<td>提供 Catalog Image 來源</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td>管理員</td>
+<td>應用 Namespace</td>
+<td>手動建立</td>
+<td>指定要安裝哪個 Operator</td>
+</tr>
+<tr>
+<td>InstallPlan</td>
+<td>OLM 自動產生</td>
+<td>同 Subscription</td>
+<td>自動或手動批准</td>
+<td>實際執行安裝任務</td>
+</tr>
+<tr>
+<td>CSV</td>
+<td>OLM 自動產生</td>
+<td>同 Subscription</td>
+<td>自動</td>
+<td>Operator 的版本控制與說明</td>
+</tr>
+<tr>
+<td>Operator Pod</td>
+<td>OLM 建立</td>
+<td>同 Namespace</td>
+<td>自動</td>
+<td>真正執行 Operator 程式</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_5">七、完整流程圖（邏輯關係）</h2>
+<pre><code>CatalogSource (index image)
+        │
+        ▼
+Subscription (你下單)
+        │
+        ▼
+InstallPlan (OLM 自動產生)
+        │
+        ▼
+CSV (說明書)
+        │
+        ▼
+Operator Pod 啟動
+        │
+        ▼
+App / CR 可用
+</code></pre>
+<hr />
+<p><strong>總結一句話：</strong>  </p>
+<blockquote>
+<p>你只需要手動建立 CatalogSource 與 Subscription，
+其餘 InstallPlan、CSV、Operator Pod 皆由 OLM 自動接手完成安裝與啟動。。</p>
+</blockquote>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../%E9%81%8B%E7%B6%AD%E7%9F%A5%E8%AD%98/" class="btn btn-neutral float-left" title="運維知識"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../%E9%81%8B%E7%B6%AD%E7%9F%A5%E8%AD%98/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
