@@ -98,4 +98,38 @@ oc get pods -A | grep <pod-name>
 | 查看節點使用率 | `oc adm top nodes` |
 | 檢查升級狀態 | `oc get clusterversion` |
 | 查看節點日誌 | `oc adm node-logs --role=master -u crio` |
-| 追蹤 Pod 啟動日誌 | `oc logs -f pod/<pod-name> -n <namespace>` |
+| 追蹤 Pod 啟動日誌 | `oc logs -f pod/<pod-name> -n <namespace>` |  
+
+
+# OpenShift / Kubernetes 常見資源縮寫對照表  
+
+| **完整名稱 (Full Name)**        | **可用縮寫 (Short Name)** |
+|----------------------------------|----------------------------|
+| Pod                              | `po`                       |
+| Service                          | `svc`                      |
+| ConfigMap                        | `cm`                       |
+| Secret                           | `sec`                      |
+| Deployment                       | *(無，需完整寫)*           |
+| ReplicaSet                       | `rs`                       |
+| Namespace                        | `ns`                       |
+| PersistentVolumeClaim (PVC)      | `pvc`                      |
+| Node                             | `no`                       |
+| Job                              | *(無，需完整寫)*           |
+| DaemonSet                        | `ds`                       |
+
+---
+
+### 📘 使用範例
+
+```bash
+# 查看 Pod
+oc get po
+
+# 查看 Service
+oc get svc
+
+# 查看 ConfigMap
+oc get cm
+
+# 查看 Deployment（無縮寫）
+oc get deployment
