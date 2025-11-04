@@ -133,3 +133,4 @@ oc get cm
 
 # 查看 Deployment（無縮寫）
 oc get deployment
+```
