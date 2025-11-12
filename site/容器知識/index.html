@@ -69,6 +69,28 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#_1">總結</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#docker-overlay">六 Docker Overlay 網路完整筆記</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#overlay">一、Overlay 是什麼</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ip">二、容器內的網路介面與 IP</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#overlay-bridge">三、Overlay 與 Bridge 的差別與關係</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_2">四、封包實際路徑解析</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1">1️⃣ 容器與容器之間（跨主機）</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2">2️⃣ 容器對外連線（上網或連主機）</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_3">、整體結構示意圖</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_4">六、口語化理解</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_5">七、重點整理</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -249,6 +271,138 @@
 </tr>
 </tbody>
 </table>
+<h2 id="docker-overlay">六 Docker Overlay 網路完整筆記</h2>
+<h2 id="overlay">一、Overlay 是什麼</h2>
+<p>Overlay 是 Docker 或 Kubernetes 用來讓「不同主機的容器能互通」的虛擬網路。<br />
+它會在多台主機之間建立 VXLAN（或 Geneve）隧道，把容器封包封起來再送到對方主機，<br />
+讓不同主機的容器看起來像在同一個內網。</p>
+<hr />
+<h2 id="ip">二、容器內的網路介面與 IP</h2>
+<p>在 Overlay 網路中，每個容器通常會有兩張虛擬網卡（eth0、eth1）：</p>
+<table>
+<thead>
+<tr>
+<th>介面名稱</th>
+<th>網段範例</th>
+<th>來源網路</th>
+<th>功能說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>eth0</strong></td>
+<td>10.0.x.x</td>
+<td>overlay（如 elk-net）</td>
+<td>用於跨主機容器之間的內部通訊</td>
+</tr>
+<tr>
+<td><strong>eth1</strong></td>
+<td>172.18.x.x</td>
+<td>docker_gwbridge</td>
+<td>用於對外連線（上網或與主機互通）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="overlay-bridge">三、Overlay 與 Bridge 的差別與關係</h2>
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>範圍</th>
+<th>功能</th>
+<th>是否跨主機</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bridge</strong></td>
+<td>單一主機</td>
+<td>容器共享主機的虛擬交換器（docker0）</td>
+<td>否</td>
+</tr>
+<tr>
+<td><strong>Overlay</strong></td>
+<td>多主機</td>
+<td>建立跨主機虛擬網路（VXLAN 封裝）</td>
+<td>是</td>
+</tr>
+<tr>
+<td><strong>docker_gwbridge</strong></td>
+<td>單一主機出口</td>
+<td>讓 overlay 容器能連外</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<p><strong>重點：</strong>
+- Overlay：負責「容器 ↔ 容器（跨主機）」的內部封包。<br />
+- Bridge / gwbridge：負責「容器 ↔ 外部世界」的出口封包。</p>
+<hr />
+<h2 id="_2">四、封包實際路徑解析</h2>
+<h3 id="1">1️⃣ 容器與容器之間（跨主機）</h3>
+<p>[容器A eth0:10.0.2.8]<br />
+↓<br />
+Overlay VXLAN 封裝 (eth0)<br />
+↓<br />
+[Node1 實體網卡]<br />
+↓<br />
+[Node2 實體網卡]<br />
+↓<br />
+Overlay VXLAN 解封<br />
+↓<br />
+[容器B eth0:10.0.2.9]</p>
+<p>此時封包只在 overlay 網路內部傳遞，不會經過外部網路。</p>
+<hr />
+<h3 id="2">2️⃣ 容器對外連線（上網或連主機）</h3>
+<p>[容器 eth1:172.18.0.3]<br />
+↓<br />
+docker_gwbridge（主機內 bridge）<br />
+↓<br />
+主機實體網卡 (eth0)<br />
+↓<br />
+外部網路 / Internet</p>
+<hr />
+<h2 id="_3">、整體結構示意圖</h2>
+<pre><code>Overlay Network (VXLAN)
+┌────────────────────────────────────────────┐
+│                10.0.2.0/24                │
+│                                            │
+│ [Node1]                           [Node2]  │
+│  ┌────────────────┐          ┌────────────────┐
+│  │容器A eth0→10.0.2.8 ─── eth0←10.0.2.9 容器B│
+│  │容器A eth1→172.18.0.3  eth1→172.18.0.4 容器B│
+│  └────────────────┘          └────────────────┘
+│         │                           │
+│   docker_gwbridge            docker_gwbridge
+│         │                           │
+│      主機網卡                    主機網卡
+│         │                           │
+└─────────┴────────────── Internet ─────┘
+</code></pre>
+<hr />
+<h2 id="_4">六、口語化理解</h2>
+<ul>
+<li>每台主機像一棟大樓，裡面的容器用 bridge 互通（同棟樓住戶）。  </li>
+<li>Overlay 就像在不同大樓之間拉光纖（VXLAN），讓住戶能跨樓通話。  </li>
+<li>docker_gwbridge 是大樓的網路出口，讓人能上網或打外線電話。</li>
+</ul>
+<hr />
+<h2 id="_5">七、重點整理</h2>
+<ol>
+<li>Overlay：讓容器跨主機互通。  </li>
+<li>gwbridge：讓 overlay 容器能連外。  </li>
+<li>容器同時會有兩張網卡：  </li>
+<li><code>eth0</code> → Overlay（內部互通）  </li>
+<li><code>eth1</code> → gwbridge（外部連線）  </li>
+<li>Overlay 是內部虛擬網路，不代表能直接上網，<br />
+   要連外需透過 bridge（docker_gwbridge）出口。</li>
+</ol>
+<pre><code></code></pre>
+<p>bridge：同主機容器互通<br />
+overlay：跨主機容器互通<br />
+docker_gwbridge：容器對外通訊出口
+```</p>
               
             </div>
           </div><footer>
