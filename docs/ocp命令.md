@@ -134,3 +134,21 @@ oc get cm
 # 查看 Deployment（無縮寫）
 oc get deployment
 ```
+
+
+
+
+
+## k8s命令
+
+# kubectl apply --dry-run 用法
+
+## 指令與行為一次看懂
+
+| 指令 | 行為描述 | 是否送到 API Server | 是否跑 Webhook（Mutating/Validating） | 是否需要 CRD 已存在 | 是否寫入 etcd |
+|------|----------|----------------------|----------------------------------------|----------------------|----------------|
+| `kubectl apply -f x.yaml --dry-run=client` | **本地端檢查 YAML**，只做語法與基本欄位驗證 | 否 | 否 | 否（但不認識 CRD 會直接報錯） | 否 |
+| `kubectl apply -f x.yaml --dry-run=server` | **送 API Server 做完整驗證**（schema、CRD、RBAC） | 是 | 是 | 是 | 否 |
+| `kubectl apply -f x.yaml --dry-run=server -o yaml` | **送 API Server 模擬建立，輸出 mutate 後最終物件** | 是 | 是 | 是 | 否 |
+
+---
