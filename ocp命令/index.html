@@ -525,6 +525,48 @@ oc get cm
 # 查看 Deployment（無縮寫）
 oc get deployment
 </code></pre>
+<h2 id="k8s">k8s命令</h2>
+<h1 id="kubectl-apply-dry-run">kubectl apply --dry-run 用法</h1>
+<h2 id="_10">指令與行為一次看懂</h2>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>行為描述</th>
+<th>是否送到 API Server</th>
+<th>是否跑 Webhook（Mutating/Validating）</th>
+<th>是否需要 CRD 已存在</th>
+<th>是否寫入 etcd</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubectl apply -f x.yaml --dry-run=client</code></td>
+<td><strong>本地端檢查 YAML</strong>，只做語法與基本欄位驗證</td>
+<td>否</td>
+<td>否</td>
+<td>否（但不認識 CRD 會直接報錯）</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>kubectl apply -f x.yaml --dry-run=server</code></td>
+<td><strong>送 API Server 做完整驗證</strong>（schema、CRD、RBAC）</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>kubectl apply -f x.yaml --dry-run=server -o yaml</code></td>
+<td><strong>送 API Server 模擬建立，輸出 mutate 後最終物件</strong></td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<hr />
               
             </div>
           </div><footer>
