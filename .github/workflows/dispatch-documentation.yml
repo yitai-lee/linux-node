@@ -1,26 +1,26 @@
-name: Dispatch docs-update to documentation repo
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  notify_documentation:
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Send repository_dispatch -> documentation repo
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.MO_TOKEN }}                # MO的 Token
-          repository: salomob-dynasafe/documentation  # 目標 repo
-          event-type: docs-update                        # 自訂事件名稱
-          client-payload: >-
-            {
-              "ref": "${{ github.ref }}",
-              "sha": "${{ github.sha }}",
-              "source_repo_full_name": "${{ github.repository }}",
-              "token_secret": "DARREN_TO_DOCUMENTATION"  
-            }
+#name: Dispatch docs-update to documentation repo
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  notify_documentation:
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#      - name: Send repository_dispatch -> documentation repo
+#        uses: peter-evans/repository-dispatch@v3
+#        with:
+#          token: ${{ secrets.MO_TOKEN }}                # MO的 Token
+#          repository: salomob-dynasafe/documentation  # 目標 repo
+#          event-type: docs-update                        # 自訂事件名稱
+#          client-payload: >-
+#            {
+#              "ref": "${{ github.ref }}",
+#              "sha": "${{ github.sha }}",
+#              "source_repo_full_name": "${{ github.repository }}",
+#              "token_secret": "DARREN_TO_DOCUMENTATION"  
+#            }
 ## change to your secret name "DARREN_TO_DOCUMENTATION"
