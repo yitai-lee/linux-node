@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>ocp-prot介紹 - Darren</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "ocp-prot\u4ecb\u7d39";
+        var mkdocs_page_input_path = "ocp-prot\u4ecb\u7d39.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../image/favicon.ico" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../note/">使用 MkDocs 建立文件網站教學筆記</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../%E5%AE%B9%E5%99%A8%E7%9F%A5%E8%AD%98/">Linux 容器筆記</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../docker_commands/">Docker常用命令</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../ansible%E7%B0%A1%E4%BB%8B%E5%8F%8A%E7%94%A8%E6%B3%95/">Ansible簡介及用法</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../%E9%81%8B%E7%B6%AD%E7%9F%A5%E8%AD%98/">運維知識</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../operator%E4%BB%8B%E7%B4%B9/">operator介紹</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../ocp%E5%91%BD%E4%BB%A4/">ocp命令</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">ocp-prot介紹</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-bootstrap-master-port">1. Bootstrap / Master 安裝期間最重要的 Port（四大核心）</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-mastercontrol-plane-ports">2. Master（Control Plane）正常運作必備 Ports</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-worker-ports">3. Worker 節點加入所需 Ports</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4-ingress-router-ports">4. Ingress / Router 運作相關 Ports（非安裝必備，但叢集運作必需）</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#5-port-bootstrap-master">5. Port 接管流程（bootstrap → master）圖示</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Darren</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">ocp-prot介紹</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="openshift-port">OpenShift 安裝與運作期間所有關鍵 Port 整理</h1>
+<p>本文件整理 OpenShift Container Platform（OCP）在 <strong>Bootstrap → Master → Worker</strong> 完整流程中所有必備且最重要的 Port。<br />
+包含作用、來源角色、用途與是否會被接管（bootstrap → master）。</p>
+<hr />
+<h2 id="1-bootstrap-master-port">1. Bootstrap / Master 安裝期間最重要的 Port（四大核心）</h2>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>協定</th>
+<th>來源角色</th>
+<th>用途說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>6443</strong></td>
+<td>TCP</td>
+<td>Bootstrap → Master</td>
+<td>Kubernetes API Server。節點首次註冊、控制平面初始化、kubectl 全部靠這個入口。</td>
+</tr>
+<tr>
+<td><strong>22623</strong></td>
+<td>TCP</td>
+<td>Bootstrap → Master</td>
+<td>MachineConfig / Ignition 配置服務（Machine Config Server）。所有節點第一次開機都從此抓設定。</td>
+</tr>
+<tr>
+<td><strong>2379</strong></td>
+<td>TCP</td>
+<td>Bootstrap → Master</td>
+<td>etcd Client API。控制平面用來存取叢集狀態的主要入口。</td>
+</tr>
+<tr>
+<td><strong>2380</strong></td>
+<td>TCP</td>
+<td>Bootstrap → Master</td>
+<td>etcd Peer。etcd 節點之間同步資料的管道。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>這四個 port 是 OCP 出生的「生命線」，缺一不可。</p>
+</blockquote>
+<hr />
+<h2 id="2-mastercontrol-plane-ports">2. Master（Control Plane）正常運作必備 Ports</h2>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>協定</th>
+<th>用途說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>10250</strong></td>
+<td>TCP</td>
+<td>kubelet API。API server 對各節點 kubelet 的健康檢查與執行命令。</td>
+</tr>
+<tr>
+<td><strong>10257</strong></td>
+<td>TCP</td>
+<td>kube-controller-manager API（HTTPS）。</td>
+</tr>
+<tr>
+<td><strong>10259</strong></td>
+<td>TCP</td>
+<td>kube-scheduler API（HTTPS）。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-worker-ports">3. Worker 節點加入所需 Ports</h2>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>協定</th>
+<th>用途說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>6443</strong></td>
+<td>TCP</td>
+<td>Worker 的 kubelet 透過此 port 註冊至 API server。</td>
+</tr>
+<tr>
+<td><strong>22623</strong></td>
+<td>TCP</td>
+<td>Worker 第一次開機抓 MachineConfig / Ignition 設定。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Worker 加入叢集只需要 <strong>6443 + 22623</strong>，不需要 etcd ports。</p>
+</blockquote>
+<hr />
+<h2 id="4-ingress-router-ports">4. Ingress / Router 運作相關 Ports（非安裝必備，但叢集運作必需）</h2>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>協定</th>
+<th>用途說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>80</strong></td>
+<td>TCP</td>
+<td>HTTP Ingress 流量入口（HAProxy Router）。</td>
+</tr>
+<tr>
+<td><strong>443</strong></td>
+<td>TCP</td>
+<td>HTTPS Ingress 流量入口。</td>
+</tr>
+<tr>
+<td><strong>1936</strong></td>
+<td>TCP</td>
+<td>HAProxy Router stats 介面（啟用後監控用）。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-port-bootstrap-master">5. Port 接管流程（bootstrap → master）圖示</h2>
+<pre><code>  ┌────────────────────────┐
+  │       Bootstrap        │
+  │------------------------│
+  │ 6443 → 臨時 API        │
+  │ 22623 → 臨時 MCS       │
+  │ 2379 → 臨時 etcd client│
+  │ 2380 → 臨時 etcd peer  │
+  └───────────┬────────────┘
+              │  Master 起來後接手
+              ▼
+  ┌────────────────────────┐
+  │         Master         │
+  │------------------------│
+  │ 6443 → 正式 API        │
+  │ 22623 → 正式 MCS       │
+  │ 2379 → 正式 etcd client│
+  │ 2380 → 正式 etcd peer  │
+  └────────────────────────┘
+</code></pre>
+<p>6443 → Kubernetes API Server
+22623 → MachineConfig / Ignition Server
+2379 → etcd client API
+2380 → etcd peer sync</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../ocp%E5%91%BD%E4%BB%A4/" class="btn btn-neutral float-left" title="ocp命令"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../ocp%E5%91%BD%E4%BB%A4/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
