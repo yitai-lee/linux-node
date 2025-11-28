@@ -419,8 +419,44 @@ App / CR 可用
 <p><strong>總結一句話：</strong>  </p>
 <blockquote>
 <p>你只需要手動建立 CatalogSource 與 Subscription，
-其餘 InstallPlan、CSV、Operator Pod 皆由 OLM 自動接手完成安裝與啟動。。</p>
+其餘 InstallPlan、CSV、Operator Pod 皆由 OLM 自動接手完成安裝與啟動。</p>
 </blockquote>
+<hr />
+<h1 id="openshift-operator-olm">OpenShift Operator 核心概念摘要（OLM 最精準版）</h1>
+<h2 id="subscriptionsub">Subscription（Sub）</h2>
+<p>代表 OLM 要安裝哪一個 Operator、使用哪個 Channel、從哪個 Catalog 取得。</p>
+<p>查詢所有 Subscription：</p>
+<pre><code class="language-bash">oc get sub -A
+</code></pre>
+<hr />
+<h2 id="clusterserviceversioncsv">ClusterServiceVersion（CSV）</h2>
+<p>代表 Operator 已安裝的版本與其 Metadata（CRD、RBAC、Deployment 規格等）。</p>
+<p>查詢 CSV（預設 namespace）：</p>
+<pre><code class="language-bash">oc get csv
+</code></pre>
+<p>查詢所有 namespace（包含 OLM 投影）：</p>
+<pre><code class="language-bash">oc get csv -A
+</code></pre>
+<hr />
+<h2 id="catalogcatalogsource-index-image">Catalog（CatalogSource / Index Image）</h2>
+<p>Operator 的版本清單來源，提供 Channel、Bundle 與 Metadata，不包含實際映像檔。</p>
+<p>查詢 CatalogSource：</p>
+<pre><code class="language-bash">oc get catalogsource -n openshift-marketplace
+</code></pre>
+<hr />
+<h2 id="harbor">Harbor（鏡像來源）</h2>
+<p>OLM 依 ICSP（ImageContentSourcePolicy）或 IDMS 設定，從 Harbor 擷取 Operator Bundle 映像檔。</p>
+<p>查詢 ICSP：</p>
+<pre><code class="language-bash">oc get imagecontentsourcepolicy
+</code></pre>
+<hr />
+<h2 id="oc-get-csv-a">為什麼 <code>oc get csv -A</code> 會很多？</h2>
+<p>因為 OLM 會將 Operator 的 CSV Metadata 投影至所有 Namespace，
+此為顯示用途，不代表每個 Namespace 都重新安裝 Operator。</p>
+<hr />
+<h2 id="_6">一句話總結（背起來）</h2>
+<p>Sub 決定要安裝什麼 → Catalog 提供版本 → CSV 表示實際已裝版本 →
+OLM 依 ICSP 從 Harbor 抓映像 → <code>csv -A</code> 多為投影不是重複安裝。</p>
               
             </div>
           </div><footer>

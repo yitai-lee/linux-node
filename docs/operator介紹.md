@@ -245,4 +245,63 @@ App / CR 可用
 
 **總結一句話：**  
 > 你只需要手動建立 CatalogSource 與 Subscription，
->其餘 InstallPlan、CSV、Operator Pod 皆由 OLM 自動接手完成安裝與啟動。。
+>其餘 InstallPlan、CSV、Operator Pod 皆由 OLM 自動接手完成安裝與啟動。
+
+---
+
+# OpenShift Operator 核心概念摘要（OLM 最精準版）
+
+## Subscription（Sub）
+代表 OLM 要安裝哪一個 Operator、使用哪個 Channel、從哪個 Catalog 取得。
+
+查詢所有 Subscription：
+```bash
+oc get sub -A
+```
+
+---
+
+## ClusterServiceVersion（CSV）
+代表 Operator 已安裝的版本與其 Metadata（CRD、RBAC、Deployment 規格等）。
+
+查詢 CSV（預設 namespace）：
+```bash
+oc get csv
+```
+
+查詢所有 namespace（包含 OLM 投影）：
+```bash
+oc get csv -A
+```
+
+---
+
+## Catalog（CatalogSource / Index Image）
+Operator 的版本清單來源，提供 Channel、Bundle 與 Metadata，不包含實際映像檔。
+
+查詢 CatalogSource：
+```bash
+oc get catalogsource -n openshift-marketplace
+```
+
+---
+
+## Harbor（鏡像來源）
+OLM 依 ICSP（ImageContentSourcePolicy）或 IDMS 設定，從 Harbor 擷取 Operator Bundle 映像檔。
+
+查詢 ICSP：
+```bash
+oc get imagecontentsourcepolicy
+```
+
+---
+
+## 為什麼 `oc get csv -A` 會很多？
+因為 OLM 會將 Operator 的 CSV Metadata 投影至所有 Namespace，
+此為顯示用途，不代表每個 Namespace 都重新安裝 Operator。
+
+---
+
+## 一句話總結（背起來）
+Sub 決定要安裝什麼 → Catalog 提供版本 → CSV 表示實際已裝版本 →
+OLM 依 ICSP 從 Harbor 抓映像 → `csv -A` 多為投影不是重複安裝。
