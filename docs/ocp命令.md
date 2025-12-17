@@ -98,7 +98,23 @@ oc get pods -A | grep <pod-name>
 | 查看節點使用率 | `oc adm top nodes` |
 | 檢查升級狀態 | `oc get clusterversion` |
 | 查看節點日誌 | `oc adm node-logs --role=master -u crio` |
-| 追蹤 Pod 啟動日誌 | `oc logs -f pod/<pod-name> -n <namespace>` |  
+| 追蹤 Pod 啟動日誌 | `oc logs -f pod/<pod-name> -n <namespace>` |
+
+
+
+# OCP 版本 對應 k8s版本
+```
+4.17 ---> 1.30
+4.18 ---> 1.31
+4.19   --->  1.32
+4.20   --->  1.33
+```
+
+確認api棄用狀況
+
+```
+oc get apirequestcounts -o json | jq -r '.items[] | select(.status.removedInRelease == "1.30" or .status.removedInRelease == "1.31" or .status.removedInRelease == "1.32" or .status.removedInRelease == "1.33") | "\(.status.removedInRelease)\t\(.status.requestCount)\t\(.metadata.name)"'
+```
 
 
 # OpenShift / Kubernetes 常見資源縮寫對照表  
@@ -152,3 +168,4 @@ oc get deployment
 | `kubectl apply -f x.yaml --dry-run=server -o yaml` | **送 API Server 模擬建立，輸出 mutate 後最終物件** | 是 | 是 | 是 | 否 |
 
 ---
+
