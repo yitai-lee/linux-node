@@ -100,6 +100,10 @@
                 <li class="toctree-l1"><a class="reference internal" href="../ocp-prot%E4%BB%8B%E7%B4%B9/">ocp-prot介紹</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../loki_pdb_%E7%B6%AD%E9%81%8B%E6%95%B4%E7%90%86/">loki_pdb_維運整理</a>
+                </li>
+              </ul>
       </div>
     </div>
     </nav>
@@ -460,6 +464,15 @@
 </tr>
 </tbody>
 </table>
+<h1 id="ocp-k8s">OCP 版本 對應 k8s版本</h1>
+<pre><code>4.17 ---&gt; 1.30
+4.18 ---&gt; 1.31
+4.19   ---&gt;  1.32
+4.20   ---&gt;  1.33
+</code></pre>
+<p>確認api棄用狀況</p>
+<pre><code>oc get apirequestcounts -o json | jq -r '.items[] | select(.status.removedInRelease == &quot;1.30&quot; or .status.removedInRelease == &quot;1.31&quot; or .status.removedInRelease == &quot;1.32&quot; or .status.removedInRelease == &quot;1.33&quot;) | &quot;\(.status.removedInRelease)\t\(.status.requestCount)\t\(.metadata.name)&quot;'
+</code></pre>
 <h1 id="openshift-kubernetes">OpenShift / Kubernetes 常見資源縮寫對照表</h1>
 <table>
 <thead>
