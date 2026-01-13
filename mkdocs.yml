@@ -11,6 +11,7 @@ nav :
  - ocp命令 : ocp命令.md
  - ocp-prot介紹 : ocp-prot介紹.md
  - loki_pdb_維運整理: loki_pdb_維運整理.md
+ - k8s命令: k8s命令.md
 theme:
   name: readthedocs
   logo: image/favicon.ico
